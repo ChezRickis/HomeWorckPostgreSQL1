@@ -1,53 +1,60 @@
 -- Задание 2
 
-select max(title), max(duration)
-from track;
+SELECT title, duration
+FROM track
+WHERE duration = (SELECT MAX(duration) FROM track);
 
-select title
-from track
-where duration >= '00:03:30';
+SELECT title
+FROM track
+WHERE duration >= '00:03:30';
 
-select title
-from collection
-where year_of_release  between '2018.01.01' and '2020.01.01';
+SELECT title
+FROM collection
+WHERE year_of_release  BETWEEN '2018.01.01' AND '2020.12.31';
 
-select _name 
-from performer
-where _name not like '% %';
+SELECT _name 
+FROM performer
+WHERE _name NOT LIKE '% %';
 
-select title 
-from track
-where title ilike '%мой%' or title ilike '%my%';
+SELECT title 
+FROM track
+WHERE title ILIKE 'мой' OR title ILIKE 'my'
+OR title ILIKE 'мой %' OR title ILIKE 'my %'
+OR title ILIKE '% мой' OR title ILIKE '% my'
+OR title ILIKE '% мой %' OR title ILIKE '% my %';
 
 -- Задание 3
 
-select title, count(performer_id)
-from genre g
-left join ganre_performer gp  on g.genre_id = gp.genre_id
-group by title;
+SELECT title, COUNT(performer_id)
+FROM genre g
+JOIN ganre_performer gp ON g.genre_id = gp.genre_id
+GROUP BY title;
 
-select count(track_id)
-from album a
-left join track t on a.album_id = t.album_id
-where a.year_of_release between '2019.01.01' and '2020.01.01';
+SELECT COUNT(track_id)
+FROM album a
+JOIN track t ON a.album_id = t.album_id
+WHERE a.year_of_release BETWEEN '2019.01.01' AND '2020.12.31';
 
-select a.title, avg(duration)
-from album a
-left join track t on a.album_id = t.album_id
-group by a.title;
+SELECT a.title, AVG(duration)
+FROM album a
+JOIN track t ON a.album_id = t.album_id
+GROUP BY a.title;
 
-select _name
-from performer p 
-left join performer_album pa on p.performer_id = pa.performer_id
-left join album a on pa.album_id = a.album_id
-where a.year_of_release not between '2020-01-01' and '2021-01-01'
-group by _name;
+SELECT _name
+FROM performer
+WHERE _name NOT IN (
+	SELECT _name
+	FROM performer p
+	JOIN performer_album pa ON pa.performer_id = p.performer_id
+	JOIN album a ON a.album_id = pa.album_id
+	WHERE a.year_of_release BETWEEN '2020.01.01' AND '2020.12.31'
+);
 
-select c.title
-from collection c
-left join track_collection tc on c.collection_id = tc.collection_id
-left join track t on tc.track_id = t.track_id
-left join performer_album pa on t.album_id = pa.album_id
-left join performer p on pa.performer_id = p.performer_id
-where p."_name" = 'Лиза'
-group by c.title;
+SELECT c.title
+FROM collection c
+JOIN track_collection tc ON c.collection_id = tc.collection_id
+JOIN track t ON tc.track_id = t.track_id
+JOIN performer_album pa ON t.album_id = pa.album_id
+JOIN performer p ON pa.performer_id = p.performer_id
+WHERE p._name = 'Лиза'
+GROUP BY c.title;
